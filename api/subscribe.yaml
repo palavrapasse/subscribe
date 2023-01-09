@@ -1,0 +1,58 @@
+openapi: 3.0.3
+info:
+  title: Specification of the web API that allow users to subscribe leaks information
+  description: |-
+    Service that processes subscribe operations requests.
+    
+    Some useful links:
+    - [Use Cases](https://github.com/palavrapasse/docs/blob/master/core/use-cases.md)
+    - [Entities](https://github.com/palavrapasse/docs/blob/master/core/entities.md)
+    - [Data Model](https://github.com/palavrapasse/docs/blob/master/core/data-model.md)
+  license:
+    name: MIT License
+    url: https://github.com/palavrapasse/santos/blob/master/LICENSE
+  version: 0.0.1
+tags:
+  - name: leaks
+    description: Leaks information subscribe endpoints
+paths:
+  /leaks/subscribe:
+    post:
+      tags:
+        - leaks
+      summary: Subscribes to new leaks
+      operationId: subscribe
+      requestBody:
+        description: Subscribe to new leaks
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+        required: true
+      responses:
+        '204':
+          description: successful operation
+components:
+  schemas:
+    Email:
+      type: string
+      format: email
+      example: "test@mail.com"
+    Subscription:
+      required:
+        - notifyEmail
+      type: object
+      properties:
+        notifyEmail: 
+            $ref: '#/components/schemas/Email'
+        affectedEmails:
+          type: array
+          items:
+            $ref: '#/components/schemas/Email'
+  requestBodies:
+    SubscriptionConfirmation:
+      description: Subscription confirmation
+      content:
+        application/json:
+          schema:
+            type: string
