@@ -1,5 +1,8 @@
-# Created by https://www.toptal.com/developers/gitignore/api/go,visualstudiocode,git,linux,windows,macos,snyk
-# Edit at https://www.toptal.com/developers/gitignore?templates=go,visualstudiocode,git,linux,windows,macos,snyk
+# Created by https://www.toptal.com/developers/gitignore/api/go,git,snyk,linux,macos,windows,visualstudiocode,dotenv
+# Edit at https://www.toptal.com/developers/gitignore?templates=go,git,snyk,linux,macos,windows,visualstudiocode,dotenv
+
+### dotenv ###
+.env
 
 ### Git ###
 # Created by git for backups. To disable backups in Git:
@@ -136,8 +139,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/go,visualstudiocode,git,linux,windows,macos,snyk
-
-# also ignore any .txt files
-
-*.txt
+# End of https://www.toptal.com/developers/gitignore/api/go,git,snyk,linux,macos,windows,visualstudiocode,dotenv
