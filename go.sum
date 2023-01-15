@@ -18,6 +18,8 @@ github.com/palavrapasse/aspirador v0.0.1 h1:PqdnHweSXfvYITOgOQC0JAXD3GeYV2x+rc4S
 github.com/palavrapasse/aspirador v0.0.1/go.mod h1:1LJFZgJoNr7In+g3PQHWwK6/Dha9jsiTT2jMV/eiAX8=
 github.com/palavrapasse/damn v0.0.4 h1:v6eWfW+MlyOuDzDoW2CQpwnebDOEO12/2sP6Tyft7Ss=
 github.com/palavrapasse/damn v0.0.4/go.mod h1:7Yj+B7xykwnKufipuZq2z8daMuqhdd7USWe/cloc5NU=
+github.com/palavrapasse/damn v0.0.5 h1:Jjm+JeoVc7/nmfpoR6qDupqQtBTMOVRo/WNtqZ4V5pU=
+github.com/palavrapasse/damn v0.0.5/go.mod h1:7Yj+B7xykwnKufipuZq2z8daMuqhdd7USWe/cloc5NU=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
