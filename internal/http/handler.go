@@ -1,12 +1,10 @@
 package http
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/palavrapasse/subscribe/internal/data"
 	"github.com/palavrapasse/subscribe/internal/logging"
 )
 
@@ -21,8 +19,8 @@ func SubscribeToLeaks(ectx echo.Context) error {
 
 	logging.Aspirador.Trace("Subscribing to leaks")
 
-	request := data.SubscriptionRequest{}
-	decerr := json.NewDecoder(ectx.Request().Body).Decode(&request)
+	request := SubscriptionRequest{}
+	decerr := ectx.Bind(&request)
 
 	if decerr != nil {
 		logging.Aspirador.Error(fmt.Sprintf("Error while reading request body: %s", decerr))
@@ -38,7 +36,7 @@ func SubscribeToLeaks(ectx echo.Context) error {
 		return InternalServerError(ectx)
 	}
 
-	subscription := data.SubscriptionRequestToSubscription(request)
+	subscription := SubscriptionRequestToSubscription(request)
 
 	err := mwctx.SubscriptionsDB.InsertSubscription(subscription)
 

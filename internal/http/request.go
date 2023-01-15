@@ -1,8 +1,6 @@
-package data
+package http
 
-import (
-	"github.com/palavrapasse/damn/pkg/entity/subscribe"
-)
+import "github.com/palavrapasse/damn/pkg/entity/subscribe"
 
 type SubscriptionRequest struct {
 	NotifyEmail    string   `json:"notifyEmail"`
