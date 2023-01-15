@@ -7,15 +7,21 @@ import (
 )
 
 const (
-	leaksDbFilePathEnvKey = "leaksdb_fp"
+	leaksDbFilePathEnvKey         = "leaksdb_fp"
+	subscriptionsDbFilePathEnvKey = "subscriptionsdb_fp"
 )
 
 var (
-	leaksDbFilePath = os.Getenv(leaksDbFilePathEnvKey)
+	leaksDbFilePath         = os.Getenv(leaksDbFilePathEnvKey)
+	subscriptionsDbFilePath = os.Getenv(subscriptionsDbFilePathEnvKey)
 )
 
-func Open() (database.DatabaseContext[database.Record], error) {
+func OpenLeaksDB() (database.DatabaseContext[database.Record], error) {
 	return database.NewDatabaseContext[database.Record](leaksDbFilePath)
+}
+
+func OpenSubscriptionsDB() (database.DatabaseContext[database.Record], error) {
+	return database.NewDatabaseContext[database.Record](subscriptionsDbFilePath)
 }
 
 func Close(dbctx database.DatabaseContext[database.Record]) error {

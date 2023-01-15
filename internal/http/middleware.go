@@ -10,35 +10,46 @@ import (
 )
 
 const (
-	dbMiddlewareKey = "db"
+	leaksDBMiddlewareKey         = "db_leak"
+	subscriptionsDBMiddlewareKey = "db_subscriptions"
 )
 
 type MiddlewareContext struct {
-	DB database.DatabaseContext[database.Record]
+	LeaksDB         database.DatabaseContext[database.Record]
+	SubscriptionsDB database.DatabaseContext[database.Record]
 }
 
-func RegisterMiddlewares(e *echo.Echo, dbctx database.DatabaseContext[database.Record]) {
-	e.Use(dbAccessMiddleware(dbctx))
+func RegisterMiddlewares(e *echo.Echo, leakdbctx database.DatabaseContext[database.Record], subscritpiondbctx database.DatabaseContext[database.Record]) {
+	e.Use(dbAccessMiddleware(leakdbctx, leaksDBMiddlewareKey))
+	e.Use(dbAccessMiddleware(subscritpiondbctx, subscriptionsDBMiddlewareKey))
 	e.Use(loggingMiddleware())
 }
 
 func GetMiddlewareContext(ectx echo.Context) (MiddlewareContext, error) {
-	db, dok := ectx.Get(dbMiddlewareKey).(database.DatabaseContext[database.Record])
+	db, dok := ectx.Get(leaksDBMiddlewareKey).(database.DatabaseContext[database.Record])
 	var err error
 
 	if !dok {
-		err = errors.New("DB not available in middleware")
+		err = errors.New("leaks DB not available in middleware")
+		return MiddlewareContext{}, err
+	}
+
+	dbSubscribe, dok := ectx.Get(subscriptionsDBMiddlewareKey).(database.DatabaseContext[database.Record])
+
+	if !dok {
+		err = errors.New("subscriptions DB not available in middleware")
 	}
 
 	return MiddlewareContext{
-		DB: db,
+		LeaksDB:         db,
+		SubscriptionsDB: dbSubscribe,
 	}, err
 }
 
-func dbAccessMiddleware(dbctx database.DatabaseContext[database.Record]) echo.MiddlewareFunc {
+func dbAccessMiddleware(dbctx database.DatabaseContext[database.Record], middlewareKey string) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(ectx echo.Context) error {
-			ectx.Set(dbMiddlewareKey, dbctx)
+			ectx.Set(middlewareKey, dbctx)
 
 			return next(ectx)
 		}

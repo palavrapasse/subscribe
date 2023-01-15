@@ -21,17 +21,25 @@ func main() {
 
 	defer e.Close()
 
-	dbctx, oerr := data.Open()
+	leaksdbctx, oerr := data.OpenLeaksDB()
 
 	if oerr != nil {
 
-		logging.Aspirador.Warning("Could not open DB connection on server start")
-		logging.Aspirador.Error(fmt.Sprintf("Could not open DB connection on server start %v", oerr.Error()))
+		logging.Aspirador.Error(fmt.Sprintf("Could not open Leaks DB connection on server start %v", oerr.Error()))
 
 		return
 	}
 
-	http.RegisterMiddlewares(e, dbctx)
+	subscriptionsdbctx, oerr := data.OpenSubscriptionsDB()
+
+	if oerr != nil {
+
+		logging.Aspirador.Error(fmt.Sprintf("Could not open Subscriptions DB connection on server start %v", oerr.Error()))
+
+		return
+	}
+
+	http.RegisterMiddlewares(e, leaksdbctx, subscriptionsdbctx)
 	http.RegisterHandlers(e)
 
 	e.Logger.Fatal(http.Start(e))
