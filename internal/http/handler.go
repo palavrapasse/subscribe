@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/palavrapasse/subscribe/internal/data"
 	"github.com/palavrapasse/subscribe/internal/logging"
 )
 
@@ -38,7 +39,7 @@ func SubscribeToLeaks(ectx echo.Context) error {
 
 	subscription := SubscriptionRequestToSubscription(request)
 
-	err := mwctx.SubscriptionsDB.InsertSubscription(subscription)
+	err := data.StoreSubscriptionDB(mwctx.SubscriptionsDB, subscription)
 
 	if err != nil {
 		logging.Aspirador.Error(fmt.Sprintf("Error while storing subscription into DB: %s", err))
