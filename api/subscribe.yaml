@@ -32,6 +32,22 @@ paths:
       responses:
         '204':
           description: successful operation
+  /leaks/notification:
+    post:
+      tags:
+        - leaks
+      summary: Notification of new leaks
+      operationId: subscribe
+      requestBody:
+        description: Notification of new leaks
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+        required: true
+      responses:
+        '204':
+          description: successful operation
 components:
   schemas:
     Email:
@@ -49,10 +65,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Email'
-  requestBodies:
-    SubscriptionConfirmation:
-      description: Subscription confirmation
-      content:
-        application/json:
-          schema:
+    Notification:
+      required:
+        - leakId
+      type: object
+      properties:
+        leakId: 
             type: string
