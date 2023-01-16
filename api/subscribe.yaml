@@ -71,4 +71,5 @@ components:
       type: object
       properties:
         leakId: 
-            type: string
+            type: integer
+            format: int64
