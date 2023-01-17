@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/palavrapasse/damn/pkg/entity"
 	"github.com/palavrapasse/subscribe/internal/data"
 	"github.com/palavrapasse/subscribe/internal/logging"
 )
@@ -85,6 +86,30 @@ func NotificationOfLeaks(ectx echo.Context) error {
 	// TODO: delete this once we integrate email send
 	logMessage := "\n"
 	for _, v := range querySubscriptionResult {
+		logMessage += string(v.Subscriber.B64Email) + "\n"
+
+		for _, i := range v.Affected {
+			logMessage += "\t\t" + string(i.HSHA256Email) + "\n"
+		}
+	}
+	logging.Aspirador.Trace(logMessage)
+
+	affectedSubscription := querySubscriptionResult.GetAffectUsers()
+
+	queryLeakResult, err := data.QueryLeaksDB(mwctx.LeaksDB, entity.AutoGenKey(request.LeakId), affectedSubscription)
+
+	if err != nil {
+		logging.Aspirador.Error(fmt.Sprintf("Error while quering leak from DB: %s", err))
+
+		return InternalServerError(ectx)
+	}
+
+	toBeEmailed := querySubscriptionResult.GetSubscriptionsOfAffectUsers(queryLeakResult)
+	toBeEmailed = append(toBeEmailed, querySubscriptionResult.GetSubscriptionsToAllLeaks()...)
+
+	// TODO: delete this once we integrate email send
+	logMessage = "\n"
+	for _, v := range toBeEmailed {
 		logMessage += string(v.Subscriber.B64Email) + "\n"
 
 		for _, i := range v.Affected {
