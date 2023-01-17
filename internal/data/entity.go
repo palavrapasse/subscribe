@@ -1,6 +1,7 @@
 package data
 
 import (
+	"github.com/palavrapasse/damn/pkg/entity"
 	"github.com/palavrapasse/damn/pkg/entity/subscribe"
 )
 
@@ -17,21 +18,7 @@ type QuerySubscriptionWithoutAffectedResult struct {
 	subscribe.Subscriber
 }
 
-func (qsr QuerySubscriptionsResult) ConvertToQueryAllSubscriptionsResult() QueryAllSubscriptionsResult {
-	var r QueryAllSubscriptionsResult
-
-	for _, v := range qsr {
-		r = r.AddSubscription(v.Subscriber, v.Affected)
-	}
-
-	return r
-}
-
-func (qsar QuerySubscriptionWithoutAffectedResult) ConvertToSubscription() subscribe.Subscription {
-	return subscribe.Subscription{
-		Subscriber: qsar.Subscriber,
-	}
-}
+type QueryLeaksResult []entity.HSHA256
 
 func (qasr QueryAllSubscriptionsResult) AddSubscription(sub subscribe.Subscriber, aff subscribe.Affected) QueryAllSubscriptionsResult {
 
@@ -51,4 +38,77 @@ func (qasr QueryAllSubscriptionsResult) AddSubscription(sub subscribe.Subscriber
 	qasr = append(qasr, subscription)
 
 	return qasr
+}
+
+func (qasr QueryAllSubscriptionsResult) GetAffectUsers() []subscribe.Affected {
+
+	aff := []subscribe.Affected{}
+
+	for _, v := range qasr {
+
+		if v.Affected != nil {
+			aff = append(aff, v.Affected...)
+		}
+	}
+
+	return aff
+}
+
+func (qasr QueryAllSubscriptionsResult) GetSubscriptionsOfAffectUsers(affectedByLeak []entity.HSHA256) []subscribe.Subscription {
+
+	sub := []subscribe.Subscription{}
+
+	for _, affEmail := range affectedByLeak {
+
+		for _, v := range qasr {
+
+			if containsEmail(v.Affected, affEmail) {
+				sub = append(sub, v)
+			}
+		}
+	}
+
+	return sub
+}
+
+func (qasr QueryAllSubscriptionsResult) GetSubscriptionsToAllLeaks() []subscribe.Subscription {
+
+	sub := []subscribe.Subscription{}
+
+	for _, v := range qasr {
+
+		if len(v.Affected) == 0 {
+			sub = append(sub, v)
+		}
+	}
+
+	return sub
+}
+
+func (qsr QuerySubscriptionsResult) ConvertToQueryAllSubscriptionsResult() QueryAllSubscriptionsResult {
+	var r QueryAllSubscriptionsResult
+
+	for _, v := range qsr {
+		r = r.AddSubscription(v.Subscriber, v.Affected)
+	}
+
+	return r
+}
+
+func (qsar QuerySubscriptionWithoutAffectedResult) ConvertToSubscription() subscribe.Subscription {
+	return subscribe.Subscription{
+		Subscriber: qsar.Subscriber,
+	}
+}
+
+func containsEmail(affected []subscribe.Affected, email entity.HSHA256) bool {
+
+	for _, v := range affected {
+
+		if v.HSHA256Email == email {
+			return true
+		}
+	}
+
+	return false
 }
