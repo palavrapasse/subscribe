@@ -6,17 +6,15 @@ import (
 )
 
 const subscriptionsWithoutAffectedQuery = `
-SELECT S.b64email
- FROM  Subscriber S
- WHERE S.subid not in
+SELECT S.b64email FROM  Subscriber S
+WHERE S.subid NOT IN
     (SELECT SA.subid
     FROM SubscriberAffected SA) 
 `
 
 const subscriptionsQuery = `
-SELECT A.hsha256email, S.b64email
- FROM Affected A, Subscriber S, SubscriberAffected SA
- WHERE SA.affid = A.affid and SA.subid = S.subid
+SELECT A.hsha256email, S.b64email FROM Affected A, Subscriber S, SubscriberAffected SA
+WHERE SA.affid = A.affid and SA.subid = S.subid
 `
 
 var subscriptionsQueryMapper = func() (*QuerySubscriptionResult, []any) {

@@ -12,7 +12,7 @@ import (
 func RegisterHandlers(e *echo.Echo) {
 
 	e.POST(subscribeRoute, SubscribeToLeaks)
-	e.POST(notificationRoute, NotificationofLeaks)
+	e.POST(notificationRoute, NotificationOfLeaks)
 
 	echo.NotFoundHandler = useNotFoundHandler()
 }
@@ -53,7 +53,7 @@ func SubscribeToLeaks(ectx echo.Context) error {
 	return NoContent(ectx)
 }
 
-func NotificationofLeaks(ectx echo.Context) error {
+func NotificationOfLeaks(ectx echo.Context) error {
 
 	logging.Aspirador.Trace("Notification of new leaks")
 
@@ -82,7 +82,7 @@ func NotificationofLeaks(ectx echo.Context) error {
 		return InternalServerError(ectx)
 	}
 
-	// TODO: This log can be deleted
+	// TODO: delete this once we integrate email send
 	logMessage := "\n"
 	for _, v := range querySubscriptionResult {
 		logMessage += string(v.Subscriber.B64Email) + "\n"
