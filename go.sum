@@ -22,6 +22,8 @@ github.com/palavrapasse/damn v0.0.5 h1:Jjm+JeoVc7/nmfpoR6qDupqQtBTMOVRo/WNtqZ4V5
 github.com/palavrapasse/damn v0.0.5/go.mod h1:7Yj+B7xykwnKufipuZq2z8daMuqhdd7USWe/cloc5NU=
 github.com/palavrapasse/damn v0.0.6 h1:CqeybAG90OgSg9yeno3Bbk9uTpcizyPdfJyYeuXkfqQ=
 github.com/palavrapasse/damn v0.0.6/go.mod h1:7Yj+B7xykwnKufipuZq2z8daMuqhdd7USWe/cloc5NU=
+github.com/palavrapasse/damn v0.0.7 h1:vIuqskIHl1JHCxQ/ayp91RkH0sMPY2NHn/OYtgJJ2Sw=
+github.com/palavrapasse/damn v0.0.7/go.mod h1:7Yj+B7xykwnKufipuZq2z8daMuqhdd7USWe/cloc5NU=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=

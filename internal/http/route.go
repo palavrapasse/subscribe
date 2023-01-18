@@ -1,5 +1,6 @@
 package http
 
 const (
-	subscribeRoute = "/leaks/subscribe"
+	subscribeRoute    = "/leaks/subscribe"
+	notificationRoute = "/leaks/notification"
 )

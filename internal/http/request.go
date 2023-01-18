@@ -7,6 +7,10 @@ type SubscriptionRequest struct {
 	AffectedEmails []string `json:"affectedEmails"`
 }
 
+type NotificationRequest struct {
+	LeakId int64 `json:"leakid"`
+}
+
 func SubscriptionRequestToSubscription(request SubscriptionRequest) subscribe.Subscription {
 	sub := subscribe.NewSubscriber(request.NotifyEmail)
 

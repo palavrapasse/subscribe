@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/palavrapasse/damn/pkg/entity"
 	"github.com/palavrapasse/subscribe/internal/data"
 	"github.com/palavrapasse/subscribe/internal/logging"
 )
@@ -12,6 +13,7 @@ import (
 func RegisterHandlers(e *echo.Echo) {
 
 	e.POST(subscribeRoute, SubscribeToLeaks)
+	e.POST(notificationRoute, NotificationOfLeaks)
 
 	echo.NotFoundHandler = useNotFoundHandler()
 }
@@ -48,6 +50,60 @@ func SubscribeToLeaks(ectx echo.Context) error {
 	}
 
 	logging.Aspirador.Trace("Success in subscribing to leaks.")
+
+	return NoContent(ectx)
+}
+
+func NotificationOfLeaks(ectx echo.Context) error {
+
+	logging.Aspirador.Trace("Notification of new leaks")
+
+	request := NotificationRequest{}
+	decerr := ectx.Bind(&request)
+
+	if decerr != nil {
+		logging.Aspirador.Error(fmt.Sprintf("Error while reading request body: %s", decerr))
+
+		return InternalServerError(ectx)
+	}
+
+	mwctx, gmerr := GetMiddlewareContext(ectx)
+
+	if gmerr != nil {
+		logging.Aspirador.Error(fmt.Sprintf("Error while getting Middleware Context: %s", gmerr))
+
+		return InternalServerError(ectx)
+	}
+
+	querySubscriptionResult, err := data.QuerySubscriptionsDB(mwctx.SubscriptionsDB)
+
+	if err != nil {
+		logging.Aspirador.Error(fmt.Sprintf("Error while quering subscription from DB: %s", err))
+
+		return InternalServerError(ectx)
+	}
+
+	affectedSubscription := querySubscriptionResult.GetAffectUsers()
+
+	queryLeakResult, err := data.QueryLeaksDB(mwctx.LeaksDB, entity.AutoGenKey(request.LeakId), affectedSubscription)
+
+	if err != nil {
+		logging.Aspirador.Error(fmt.Sprintf("Error while quering leak from DB: %s", err))
+
+		return InternalServerError(ectx)
+	}
+
+	toBeEmailed := querySubscriptionResult.GetSubscriptionsOfAffectUsers(queryLeakResult)
+	toBeEmailed = append(toBeEmailed, querySubscriptionResult.GetSubscriptionsToAllLeaks()...)
+
+	// TODO: delete this once we integrate email send
+	var logMessage = "\n"
+	for _, v := range toBeEmailed {
+		logMessage += string(v.Subscriber.B64Email) + "\n"
+	}
+	logging.Aspirador.Trace(logMessage)
+
+	logging.Aspirador.Trace("Success in notification of new leaks.")
 
 	return NoContent(ectx)
 }
