@@ -55,15 +55,16 @@ func (qasr QueryAllSubscriptionsResult) GetAffectUsers() []subscribe.Affected {
 }
 
 func (qasr QueryAllSubscriptionsResult) GetSubscriptionsOfAffectUsers(affectedByLeak []entity.HSHA256) []subscribe.Subscription {
-
+	alreadyAdded := make(map[subscribe.Subscriber]bool)
 	sub := []subscribe.Subscription{}
 
 	for _, affEmail := range affectedByLeak {
 
 		for _, v := range qasr {
 
-			if containsEmail(v.Affected, affEmail) {
+			if !alreadyAdded[v.Subscriber] && containsEmail(v.Affected, affEmail) {
 				sub = append(sub, v)
+				alreadyAdded[v.Subscriber] = true
 			}
 		}
 	}
