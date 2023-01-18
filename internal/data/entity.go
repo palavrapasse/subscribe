@@ -59,9 +59,7 @@ func (qasr QueryAllSubscriptionsResult) GetSubscriptionsOfAffectUsers(affectedBy
 	sub := []subscribe.Subscription{}
 
 	for _, affEmail := range affectedByLeak {
-
 		for _, v := range qasr {
-
 			if !alreadyAdded[v.Subscriber] && containsEmail(v.Affected, affEmail) {
 				sub = append(sub, v)
 				alreadyAdded[v.Subscriber] = true
