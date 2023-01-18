@@ -83,17 +83,6 @@ func NotificationOfLeaks(ectx echo.Context) error {
 		return InternalServerError(ectx)
 	}
 
-	// TODO: delete this once we integrate email send
-	logMessage := "\n"
-	for _, v := range querySubscriptionResult {
-		logMessage += string(v.Subscriber.B64Email) + "\n"
-
-		for _, i := range v.Affected {
-			logMessage += "\t\t" + string(i.HSHA256Email) + "\n"
-		}
-	}
-	logging.Aspirador.Trace(logMessage)
-
 	affectedSubscription := querySubscriptionResult.GetAffectUsers()
 
 	queryLeakResult, err := data.QueryLeaksDB(mwctx.LeaksDB, entity.AutoGenKey(request.LeakId), affectedSubscription)
@@ -108,13 +97,9 @@ func NotificationOfLeaks(ectx echo.Context) error {
 	toBeEmailed = append(toBeEmailed, querySubscriptionResult.GetSubscriptionsToAllLeaks()...)
 
 	// TODO: delete this once we integrate email send
-	logMessage = "\n"
+	var logMessage = "\n"
 	for _, v := range toBeEmailed {
 		logMessage += string(v.Subscriber.B64Email) + "\n"
-
-		for _, i := range v.Affected {
-			logMessage += "\t\t" + string(i.HSHA256Email) + "\n"
-		}
 	}
 	logging.Aspirador.Trace(logMessage)
 
