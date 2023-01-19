@@ -32,8 +32,8 @@ var subscriptionsQueryMapper = func() (*QuerySubscriptionResult, []any) {
 	return &aul, []any{&aul.HSHA256Email, &aul.B64Email}
 }
 
-var subscriptionsWithoutAffectedQueryMapper = func() (*QuerySubscriptionWithoutAffectedResult, []any) {
-	aul := QuerySubscriptionWithoutAffectedResult{}
+var subscriptionsWithoutAffectedQueryMapper = func() (*QuerySubscriptionResult, []any) {
+	aul := QuerySubscriptionResult{}
 
 	return &aul, []any{&aul.B64Email}
 }
@@ -49,7 +49,7 @@ func StoreSubscriptionDB(dbctx database.DatabaseContext[database.Record], subscr
 	return dbctx.InsertSubscription(subscription)
 }
 
-func QuerySubscriptionsDB(dbctx database.DatabaseContext[database.Record]) (QueryAllSubscriptionsResult, error) {
+func QuerySubscriptionsDB(dbctx database.DatabaseContext[database.Record]) (QuerySubscriptionsResult, error) {
 	ctx := database.Convert[database.Record, QuerySubscriptionResult](dbctx)
 
 	subscriptions, err := querySubscriptions(ctx)
@@ -58,29 +58,24 @@ func QuerySubscriptionsDB(dbctx database.DatabaseContext[database.Record]) (Quer
 		return nil, err
 	}
 
-	ctxAll := database.Convert[database.Record, QuerySubscriptionWithoutAffectedResult](dbctx)
-	subscriptionsWithoutAffected, err := queryAllSubscriptions(ctxAll)
+	subscriptionsWithoutAffected, err := queryAllSubscriptions(ctx)
 
 	if err != nil {
 		return nil, err
 	}
 
-	sub := subscriptions.ConvertToQueryAllSubscriptionsResult()
+	subscriptions = append(subscriptions, subscriptionsWithoutAffected...)
 
-	for _, v := range subscriptionsWithoutAffected {
-		sub = append(sub, v.ConvertToSubscription())
-	}
-
-	return sub, nil
+	return subscriptions, nil
 }
 
-func QueryLeaksDB(dbctx database.DatabaseContext[database.Record], leakid entity.AutoGenKey, affected []subscribe.Affected) (QueryLeaksResult, error) {
+func QueryAffectedLeaksDB(dbctx database.DatabaseContext[database.Record], leakid entity.AutoGenKey, affected []subscribe.Affected) (QueryLeaksResult, error) {
 	ctx := database.Convert[database.Record, entity.HSHA256](dbctx)
 
 	return queryLeaksThatAffectUsers(ctx, leakid, affected)
 }
 
-func queryAllSubscriptions(dbctx database.DatabaseContext[QuerySubscriptionWithoutAffectedResult]) ([]QuerySubscriptionWithoutAffectedResult, error) {
+func queryAllSubscriptions(dbctx database.DatabaseContext[QuerySubscriptionResult]) (QuerySubscriptionsResult, error) {
 	q, m, vs := prepareAllSubscriptionsQuery()
 
 	return dbctx.CustomQuery(q, m, vs...)
@@ -98,7 +93,7 @@ func queryLeaksThatAffectUsers(dbctx database.DatabaseContext[entity.HSHA256], l
 	return dbctx.CustomQuery(q, m, vs...)
 }
 
-func prepareAllSubscriptionsQuery() (string, database.TypedQueryResultMapper[QuerySubscriptionWithoutAffectedResult], []any) {
+func prepareAllSubscriptionsQuery() (string, database.TypedQueryResultMapper[QuerySubscriptionResult], []any) {
 	return subscriptionsWithoutAffectedQuery, subscriptionsWithoutAffectedQueryMapper, []any{}
 }
 

@@ -85,7 +85,7 @@ func NotificationOfLeaks(ectx echo.Context) error {
 
 	affectedSubscription := querySubscriptionResult.GetAffectUsers()
 
-	queryLeakResult, err := data.QueryLeaksDB(mwctx.LeaksDB, entity.AutoGenKey(request.LeakId), affectedSubscription)
+	usersAffectedByLeak, err := data.QueryAffectedLeaksDB(mwctx.LeaksDB, entity.AutoGenKey(request.LeakId), affectedSubscription)
 
 	if err != nil {
 		logging.Aspirador.Error(fmt.Sprintf("Error while quering leak from DB: %s", err))
@@ -93,13 +93,17 @@ func NotificationOfLeaks(ectx echo.Context) error {
 		return InternalServerError(ectx)
 	}
 
-	toBeEmailed := querySubscriptionResult.GetSubscriptionsOfAffectUsers(queryLeakResult)
-	toBeEmailed = append(toBeEmailed, querySubscriptionResult.GetSubscriptionsToAllLeaks()...)
+	subscriberAffectedsByLeak := querySubscriptionResult.RemoveNotAffected(usersAffectedByLeak)
+	toBeEmailed := subscriberAffectedsByLeak.ConvertToSubscriptions()
 
 	// TODO: delete this once we integrate email send
 	var logMessage = "\n"
 	for _, v := range toBeEmailed {
-		logMessage += string(v.Subscriber.B64Email) + "\n"
+		logMessage += "Email to: " + string(v.Subscriber.B64Email) + "\n"
+		logMessage += "\t\t The affecteds by leak are:\n"
+		for _, i := range v.Affected {
+			logMessage += "\t\t\t- " + string(i.HSHA256Email) + "\n"
+		}
 	}
 	logging.Aspirador.Trace(logMessage)
 
