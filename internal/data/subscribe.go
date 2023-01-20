@@ -102,9 +102,8 @@ func prepareSubscriptionsQuery() (string, database.TypedQueryResultMapper[QueryS
 }
 
 func prepareAffectedUsersQuery(leakid entity.AutoGenKey, affected []subscribe.Affected) (string, database.TypedQueryResultMapper[QueryAffectedByLeakResult], []any) {
-	values := []any{}
+	values := []any{leakid}
 
-	values = append(values, leakid)
 	for _, v := range affected {
 		values = append(values, string(v.HSHA256Email))
 	}
