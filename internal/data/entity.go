@@ -7,9 +7,8 @@ import (
 )
 
 type EmailInfo struct {
-	UsersAffected     AllAffectedsInfo
-	Leak              query.Leak
-	PlatformsAffected query.Platform
+	UsersAffected AllAffectedsInfo
+	LeakInfo      LeakInfo
 }
 
 type AllAffectedsInfo []AffectedInfo
@@ -17,6 +16,11 @@ type AllAffectedsInfo []AffectedInfo
 type AffectedInfo struct {
 	DestinationB64Email entity.Base64
 	AffectedsEmail      []string
+}
+
+type LeakInfo struct {
+	Leak              query.Leak
+	PlatformsAffected []query.Platform
 }
 
 type QuerySubscriptionsResult []QuerySubscriptionResult
