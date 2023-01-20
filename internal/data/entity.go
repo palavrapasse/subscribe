@@ -2,10 +2,22 @@ package data
 
 import (
 	"github.com/palavrapasse/damn/pkg/entity"
+	"github.com/palavrapasse/damn/pkg/entity/query"
 	"github.com/palavrapasse/damn/pkg/entity/subscribe"
 )
 
-type Subscriptions []subscribe.Subscription
+type EmailInfo struct {
+	UsersAffected     AllAffectedsInfo
+	Leak              query.Leak
+	PlatformsAffected query.Platform
+}
+
+type AllAffectedsInfo []AffectedInfo
+
+type AffectedInfo struct {
+	DestinationB64Email entity.Base64
+	AffectedsEmail      []string
+}
 
 type QuerySubscriptionsResult []QuerySubscriptionResult
 
@@ -19,39 +31,9 @@ type QuerySubscriptionWithoutAffectedResult struct {
 	subscribe.Affected
 }
 
-type QueryLeaksResult []entity.HSHA256
-
-func (qsr QuerySubscriptionsResult) ConvertToSubscriptions() Subscriptions {
-	var r Subscriptions
-
-	for _, v := range qsr {
-		r = r.addSubscription(v.Subscriber, v.Affected)
-	}
-
-	return r
-}
-
-func (qasr Subscriptions) addSubscription(sub subscribe.Subscriber, aff subscribe.Affected) Subscriptions {
-
-	for i, v := range qasr {
-
-		if v.Subscriber.B64Email == sub.B64Email {
-			qasr[i].Affected = append(qasr[i].Affected, aff)
-			return qasr
-		}
-	}
-
-	subscription := subscribe.Subscription{
-		Subscriber: sub,
-	}
-
-	if len(aff.HSHA256Email) != 0 {
-		subscription.Affected = []subscribe.Affected{aff}
-	}
-
-	qasr = append(qasr, subscription)
-
-	return qasr
+type QueryAffectedByLeakResult struct {
+	entity.HSHA256
+	Email string
 }
 
 func (qsr QuerySubscriptionsResult) GetAffectUsers() []subscribe.Affected {
@@ -68,20 +50,43 @@ func (qsr QuerySubscriptionsResult) GetAffectUsers() []subscribe.Affected {
 	return aff
 }
 
-func (qsr QuerySubscriptionsResult) RemoveNotAffected(usersAffectedByLeak QueryLeaksResult) QuerySubscriptionsResult {
+func (qsr QuerySubscriptionsResult) GetAffectedsInfo(usersAffectedByLeak []QueryAffectedByLeakResult) AllAffectedsInfo {
 
 	alreadyAdded := make(map[QuerySubscriptionResult]bool)
-	result := QuerySubscriptionsResult{}
+	result := AllAffectedsInfo{}
 
 	for _, userAffected := range usersAffectedByLeak {
 		for _, sub := range qsr {
 
-			if !alreadyAdded[sub] && sub.Affected.HSHA256Email == userAffected {
-				result = append(result, sub)
+			if !alreadyAdded[sub] && sub.Affected.HSHA256Email == userAffected.HSHA256 {
+				result = result.addAffectedInfo(sub.Subscriber, userAffected.Email)
 				alreadyAdded[sub] = true
 			}
 		}
 	}
 
 	return result
+}
+
+func (aainfo AllAffectedsInfo) addAffectedInfo(sub subscribe.Subscriber, aff string) AllAffectedsInfo {
+
+	for i, v := range aainfo {
+
+		if v.DestinationB64Email == sub.B64Email {
+			aainfo[i].AffectedsEmail = append(aainfo[i].AffectedsEmail, aff)
+			return aainfo
+		}
+	}
+
+	affInfo := AffectedInfo{
+		DestinationB64Email: sub.B64Email,
+	}
+
+	if len(aff) != 0 {
+		affInfo.AffectedsEmail = []string{aff}
+	}
+
+	aainfo = append(aainfo, affInfo)
+
+	return aainfo
 }

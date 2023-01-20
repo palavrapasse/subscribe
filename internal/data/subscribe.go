@@ -21,7 +21,7 @@ WHERE SA.affid = A.affid and SA.subid = S.subid
 `
 
 const leaksByLeakIdUserHashPreparedQuery = `
-SELECT HU.hsha256 FROM Leak L, LeakUser LU, User U, HashUser HU
+SELECT HU.hsha256, U.email FROM Leak L, LeakUser LU, User U, HashUser HU
     WHERE L.leakid = ? and LU.leakid = L.leakid and LU.userid = U.userid and U.userid = HU.userid 
     AND HU.hsha256 IN (%s)
 `
@@ -38,10 +38,10 @@ var subscriptionsWithoutAffectedQueryMapper = func() (*QuerySubscriptionResult, 
 	return &aul, []any{&aul.B64Email}
 }
 
-var leaksQueryMapper = func() (*entity.HSHA256, []any) {
-	aul := entity.HSHA256("")
+var affectedByleakQueryMapper = func() (*QueryAffectedByLeakResult, []any) {
+	aul := QueryAffectedByLeakResult{}
 
-	return &aul, []any{&aul}
+	return &aul, []any{&aul.HSHA256, &aul.Email}
 }
 
 func StoreSubscriptionDB(dbctx database.DatabaseContext[database.Record], subscription subscribe.Subscription) error {
@@ -69,8 +69,8 @@ func QuerySubscriptionsDB(dbctx database.DatabaseContext[database.Record]) (Quer
 	return subscriptions, nil
 }
 
-func QueryAffectedLeaksDB(dbctx database.DatabaseContext[database.Record], leakid entity.AutoGenKey, affected []subscribe.Affected) (QueryLeaksResult, error) {
-	ctx := database.Convert[database.Record, entity.HSHA256](dbctx)
+func QueryAffectedLeaksDB(dbctx database.DatabaseContext[database.Record], leakid entity.AutoGenKey, affected []subscribe.Affected) ([]QueryAffectedByLeakResult, error) {
+	ctx := database.Convert[database.Record, QueryAffectedByLeakResult](dbctx)
 
 	return queryLeaksThatAffectUsers(ctx, leakid, affected)
 }
@@ -87,7 +87,7 @@ func querySubscriptions(dbctx database.DatabaseContext[QuerySubscriptionResult])
 	return dbctx.CustomQuery(q, m, vs...)
 }
 
-func queryLeaksThatAffectUsers(dbctx database.DatabaseContext[entity.HSHA256], leakid entity.AutoGenKey, affected []subscribe.Affected) (QueryLeaksResult, error) {
+func queryLeaksThatAffectUsers(dbctx database.DatabaseContext[QueryAffectedByLeakResult], leakid entity.AutoGenKey, affected []subscribe.Affected) ([]QueryAffectedByLeakResult, error) {
 	q, m, vs := prepareAffectedUsersQuery(leakid, affected)
 
 	return dbctx.CustomQuery(q, m, vs...)
@@ -101,7 +101,7 @@ func prepareSubscriptionsQuery() (string, database.TypedQueryResultMapper[QueryS
 	return subscriptionsQuery, subscriptionsQueryMapper, []any{}
 }
 
-func prepareAffectedUsersQuery(leakid entity.AutoGenKey, affected []subscribe.Affected) (string, database.TypedQueryResultMapper[entity.HSHA256], []any) {
+func prepareAffectedUsersQuery(leakid entity.AutoGenKey, affected []subscribe.Affected) (string, database.TypedQueryResultMapper[QueryAffectedByLeakResult], []any) {
 	values := []any{}
 
 	values = append(values, leakid)
@@ -109,5 +109,5 @@ func prepareAffectedUsersQuery(leakid entity.AutoGenKey, affected []subscribe.Af
 		values = append(values, string(v.HSHA256Email))
 	}
 
-	return fmt.Sprintf(leaksByLeakIdUserHashPreparedQuery, database.MultiplePlaceholder(len(values)-1)), leaksQueryMapper, values
+	return fmt.Sprintf(leaksByLeakIdUserHashPreparedQuery, database.MultiplePlaceholder(len(values)-1)), affectedByleakQueryMapper, values
 }

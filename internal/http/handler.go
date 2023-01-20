@@ -1,6 +1,7 @@
 package http
 
 import (
+	"encoding/base64"
 	"fmt"
 	"net/http"
 
@@ -93,16 +94,16 @@ func NotificationOfLeaks(ectx echo.Context) error {
 		return InternalServerError(ectx)
 	}
 
-	subscriberAffectedsByLeak := querySubscriptionResult.RemoveNotAffected(usersAffectedByLeak)
-	toBeEmailed := subscriberAffectedsByLeak.ConvertToSubscriptions()
+	subscriberAffectedsByLeak := querySubscriptionResult.GetAffectedsInfo(usersAffectedByLeak)
 
 	// TODO: delete this once we integrate email send
 	var logMessage = "\n"
-	for _, v := range toBeEmailed {
-		logMessage += "Email to: " + string(v.Subscriber.B64Email) + "\n"
+	for _, v := range subscriberAffectedsByLeak {
+		email, _ := base64.StdEncoding.DecodeString(string(v.DestinationB64Email))
+		logMessage += "Email to: " + string(v.DestinationB64Email) + " -> " + string(email) + "\n"
 		logMessage += "\t\t The affecteds by leak are:\n"
-		for _, i := range v.Affected {
-			logMessage += "\t\t\t- " + string(i.HSHA256Email) + "\n"
+		for _, i := range v.AffectedsEmail {
+			logMessage += "\t\t\t- " + string(i) + "\n"
 		}
 	}
 	logging.Aspirador.Trace(logMessage)
