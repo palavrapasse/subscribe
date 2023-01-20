@@ -36,6 +36,11 @@ type QueryAffectedByLeakResult struct {
 	Email string
 }
 
+type QueryLeakByIdResult struct {
+	query.Leak
+	query.Platform
+}
+
 func (qsr QuerySubscriptionsResult) GetAffectUsers() []subscribe.Affected {
 
 	aff := []subscribe.Affected{}
