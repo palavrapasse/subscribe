@@ -8,7 +8,7 @@ type SubscriptionRequest struct {
 }
 
 type NotificationRequest struct {
-	LeakId int64 `json:"leakid"`
+	LeakId int64 `json:"leakId"`
 }
 
 func SubscriptionRequestToSubscription(request SubscriptionRequest) subscribe.Subscription {

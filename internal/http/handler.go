@@ -84,18 +84,6 @@ func NotificationOfLeaks(ectx echo.Context) error {
 		return InternalServerError(ectx)
 	}
 
-	// TODO: delete this once we integrate email send
-	var logMessage = "\n"
-	for _, v := range usersAffectedByLeak {
-		email, _ := base64.StdEncoding.DecodeString(string(v.DestinationB64Email))
-		logMessage += "Email to: " + string(v.DestinationB64Email) + " -> " + string(email) + "\n"
-		logMessage += "\t\t The affecteds by leak are:\n"
-		for _, i := range v.AffectedsEmail {
-			logMessage += "\t\t\t- " + string(i) + "\n"
-		}
-	}
-	logging.Aspirador.Trace(logMessage)
-
 	leakInformation, err := getLeakInformation(mwctx, leakId)
 
 	if err != nil {
@@ -106,6 +94,23 @@ func NotificationOfLeaks(ectx echo.Context) error {
 		UsersAffected: usersAffectedByLeak,
 		LeakInfo:      leakInformation,
 	}
+
+	// TODO: delete this once we integrate email send
+	var logMessage = "\n"
+	for _, v := range emailInfo.UsersAffected {
+		email, errDecode := base64.StdEncoding.DecodeString(string(v.DestinationB64Email))
+
+		if errDecode != nil {
+			return InternalServerError(ectx)
+		}
+
+		logMessage += "Email to: " + string(v.DestinationB64Email) + " -> " + string(email) + "\n"
+		logMessage += "\t\t The affecteds by leak are:\n"
+		for _, i := range v.AffectedsEmail {
+			logMessage += "\t\t\t- " + string(i) + "\n"
+		}
+	}
+	logging.Aspirador.Trace(logMessage)
 
 	logMessage = "\nLeak.Context \t" + string(emailInfo.LeakInfo.Leak.Context)
 	logMessage += "\nLeak.ShareDateSC " + emailInfo.LeakInfo.Leak.ShareDateSC.String()
@@ -160,7 +165,7 @@ func getLeakInformation(mwctx MiddlewareContext, leakId entity.AutoGenKey) (data
 
 	size := len(queryLeakResult)
 	if size == 0 {
-		err = fmt.Errorf("Could not query leak with id %d:", leakId)
+		err = fmt.Errorf("could not query leak with id %d", leakId)
 		logging.Aspirador.Error(fmt.Sprintf("Error while quering leak from DB: %s", err))
 		return data.LeakInfo{}, err
 	}

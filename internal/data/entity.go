@@ -19,8 +19,8 @@ type AffectedInfo struct {
 }
 
 type LeakInfo struct {
-	Leak              query.Leak
 	PlatformsAffected []query.Platform
+	Leak              query.Leak
 }
 
 type QuerySubscriptionsResult []QuerySubscriptionResult
@@ -41,8 +41,8 @@ type QueryAffectedByLeakResult struct {
 }
 
 type QueryLeakByIdResult struct {
-	query.Leak
 	query.Platform
+	query.Leak
 }
 
 func (qsr QuerySubscriptionsResult) GetAffectUsers() []subscribe.Affected {
