@@ -108,5 +108,5 @@ func prepareAffectedUsersQuery(leakid entity.AutoGenKey, affected []subscribe.Af
 		values = append(values, string(v.HSHA256Email))
 	}
 
-	return fmt.Sprintf(leaksByLeakIdUserHashPreparedQuery, database.MultiplePlaceholder(len(values)-1)), affectedByleakQueryMapper, values
+	return fmt.Sprintf(leaksByLeakIdUserHashPreparedQuery, database.MultiplePlaceholder(len(affected))), affectedByleakQueryMapper, values
 }
