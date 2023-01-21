@@ -1,15 +1,13 @@
 package data
 
 import (
-	"fmt"
-
 	"github.com/palavrapasse/damn/pkg/database"
 	"github.com/palavrapasse/damn/pkg/entity"
 )
 
 const leakByIdQuery = `
 SELECT L.*, P.name FROM Leak L, LeakPlatform LP, Platform P
-WHERE L.leakid = %d and LP.leakid = L.leakid and LP.platid = P.platid
+WHERE L.leakid = ? and LP.leakid = L.leakid and LP.platid = P.platid
 `
 
 var leakByIdQueryMapper = func() (*QueryLeakByIdResult, []any) {
@@ -31,5 +29,5 @@ func queryLeakById(dbctx database.DatabaseContext[QueryLeakByIdResult], leakid e
 }
 
 func prepareLeakByIdQuery(leakid entity.AutoGenKey) (string, database.TypedQueryResultMapper[QueryLeakByIdResult], []any) {
-	return fmt.Sprintf(leakByIdQuery, leakid), leakByIdQueryMapper, []any{}
+	return leakByIdQuery, leakByIdQueryMapper, []any{leakid}
 }
