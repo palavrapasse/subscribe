@@ -159,8 +159,8 @@ func getLeakInformation(mwctx MiddlewareContext, leakId entity.AutoGenKey) (data
 	}
 
 	size := len(queryLeakResult)
-	if size < 1 {
-		err = fmt.Errorf("Query to get leak information did not return a thing")
+	if size == 0 {
+		err = fmt.Errorf("Could not query leak with id %d:", leakId)
 		logging.Aspirador.Error(fmt.Sprintf("Error while quering leak from DB: %s", err))
 		return data.LeakInfo{}, err
 	}
