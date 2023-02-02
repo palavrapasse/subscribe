@@ -140,3 +140,5 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/go,git,snyk,linux,macos,windows,visualstudiocode,dotenv
+
+.local-git-credentials
