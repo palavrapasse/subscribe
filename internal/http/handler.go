@@ -8,6 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/palavrapasse/damn/pkg/entity"
 	"github.com/palavrapasse/damn/pkg/entity/query"
+	"github.com/palavrapasse/paramedic/pkg"
 	"github.com/palavrapasse/subscribe/internal/data"
 	"github.com/palavrapasse/subscribe/internal/logging"
 )
@@ -16,6 +17,7 @@ func RegisterHandlers(e *echo.Echo) {
 
 	e.POST(subscribeRoute, SubscribeToLeaks)
 	e.POST(notificationRoute, NotificationOfLeaks)
+	e.GET(healthCheckRoute, QueryHealthCheck)
 
 	echo.NotFoundHandler = useNotFoundHandler()
 }
@@ -128,6 +130,19 @@ func useNotFoundHandler() func(c echo.Context) error {
 	return func(c echo.Context) error {
 		return c.NoContent(http.StatusNotFound)
 	}
+}
+
+func QueryHealthCheck(ectx echo.Context) error {
+
+	result, err := pkg.CheckHealth()
+
+	if err != nil {
+		return InternalServerError(ectx)
+	}
+
+	logging.Aspirador.Trace(fmt.Sprintf("%v", result))
+
+	return Ok(ectx, result)
 }
 
 func getUsersAffectedByLeak(mwctx MiddlewareContext, leakId entity.AutoGenKey) (data.AllAffectedsInfo, error) {
