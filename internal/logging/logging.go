@@ -22,7 +22,7 @@ func CreateAspiradorClients() []as.Client {
 
 	consoleClient := as.NewConsoleClient()
 
-	telegramClient := as.NewTelegramClient(telegramBotToken, telegramChatId)
+	telegramClient := as.NewTelegramClient(telegramBotToken, telegramChatId, as.WARNING, as.ERROR)
 
 	return []as.Client{consoleClient, telegramClient}
 }
