@@ -22,5 +22,6 @@ FROM scratch
 WORKDIR /app
 
 COPY --from=builder /app /app/
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 CMD [ "/app/subscribe" ]
