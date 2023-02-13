@@ -14,3 +14,4 @@ subscriptionsdb_fp=/usr/share/palavrapasse/subscriptionsdb.sqlite
 
 telegram_token=
 telegram_chat_id=
+logging_fp=
