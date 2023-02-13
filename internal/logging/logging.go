@@ -11,10 +11,14 @@ const (
 	telegramChatIdEnvKey   = "telegram_chat_id"
 )
 
+const loggingFilePathEnvKey = "logging_fp"
+
 var (
 	telegramBotToken = os.Getenv(telegramBotTokenEnvKey)
 	telegramChatId   = os.Getenv(telegramChatIdEnvKey)
 )
+
+var loggingFilePath = os.Getenv(loggingFilePathEnvKey)
 
 var Aspirador as.Aspirador
 
@@ -24,5 +28,11 @@ func CreateAspiradorClients() []as.Client {
 
 	telegramClient := as.NewTelegramClient(telegramBotToken, telegramChatId, as.WARNING, as.ERROR)
 
-	return []as.Client{consoleClient, telegramClient}
+	fileClient, err := as.NewFileClient(loggingFilePath)
+
+	if err != nil {
+		return []as.Client{consoleClient, telegramClient}
+	}
+
+	return []as.Client{consoleClient, telegramClient, fileClient}
 }
