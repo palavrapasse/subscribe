@@ -44,6 +44,7 @@ docker run \
     --mount "type=bind,src=$subscriptionsdb_fp,dst=$subscriptionsdb_fp" \
     --mount "type=bind,src=$server_tls_crt_fp,dst=$server_tls_crt_fp" \
     --mount "type=bind,src=$server_tls_key_fp,dst=$server_tls_key_fp" \
+    --mount "type=bind,src=$logging_fp,dst=$logging_fp" \
     --env-file .env \
     -t $docker_tag
 ```
