@@ -62,7 +62,7 @@ func loggingMiddleware() echo.MiddlewareFunc {
 
 			req := ectx.Request()
 
-			logging.Aspirador.Info(fmt.Sprintf("Host: %s | Method: %s | Path: %s", req.Host, req.Method, req.URL.RequestURI()))
+			logging.Aspirador.Info(fmt.Sprintf("Host: %s | Method: %s | Path: %s | Client IP: %s", req.Host, req.Method, req.URL.RequestURI(), ectx.RealIP()))
 
 			return next(ectx)
 		}
