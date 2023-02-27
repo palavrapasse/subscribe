@@ -2,6 +2,8 @@ version: 2
 updates:
   - package-ecosystem: "gomod"
     directory: "/"
+    allow:
+      - dependency-name: github.com/palavrapasse*
     schedule:
       interval: "daily"
       time: "20:00"
