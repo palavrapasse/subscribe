@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/joho/godotenv v1.5.1
-	github.com/labstack/echo/v4 v4.10.1
+	github.com/labstack/echo/v4 v4.10.2
 	github.com/palavrapasse/aspirador v0.0.3
 	github.com/palavrapasse/damn v0.0.9
 	github.com/palavrapasse/paramedic v0.0.2
