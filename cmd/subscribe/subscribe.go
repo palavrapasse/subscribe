@@ -13,7 +13,7 @@ import (
 
 func main() {
 
-	logging.Aspirador = as.WithClients(logging.CreateAspiradorClients())
+	logging.Aspirador = as.WithClients(logging.CreateAspiradorClients(http.ServerAddress()))
 
 	logging.Aspirador.Trace("Starting Subscribe Service")
 
