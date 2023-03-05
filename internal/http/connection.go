@@ -22,7 +22,7 @@ var (
 )
 
 func Start(e *echo.Echo) error {
-	addr := serverAddress()
+	addr := ServerAddress()
 
 	if len(serverTLSCertFilePath) == 0 {
 		return e.Start(addr)
@@ -31,6 +31,6 @@ func Start(e *echo.Echo) error {
 	return e.StartTLS(addr, serverTLSCertFilePath, serverTLSKeyFilePath)
 }
 
-func serverAddress() string {
+func ServerAddress() string {
 	return fmt.Sprintf("%s:%s", serverHost, serverPort)
 }
