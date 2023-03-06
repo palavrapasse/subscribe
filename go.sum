@@ -20,8 +20,8 @@ github.com/mattn/go-sqlite3 v1.14.16 h1:yOQRA0RpS5PFz/oikGwBEqvAWhWg5ufRz4ETLjwp
 github.com/mattn/go-sqlite3 v1.14.16/go.mod h1:2eHXhiwb8IkHr+BDWZGa96P6+rkvnG63S2DGjv9HUNg=
 github.com/palavrapasse/aspirador v0.0.5 h1:Z1IkbdCaR/wOT6wZT0n3GTuibW6muy97L9vmZKz6S8Q=
 github.com/palavrapasse/aspirador v0.0.5/go.mod h1:1LJFZgJoNr7In+g3PQHWwK6/Dha9jsiTT2jMV/eiAX8=
-github.com/palavrapasse/damn v0.0.9 h1:xqORTlSn/j/CZgmrfl9NMWhh5SqXDCQ3kQ/nY1IhWaE=
-github.com/palavrapasse/damn v0.0.9/go.mod h1:7Yj+B7xykwnKufipuZq2z8daMuqhdd7USWe/cloc5NU=
+github.com/palavrapasse/damn v0.0.10 h1:hYu/tmhXEC6z02vVO0bk6/DHsu+G2kuRwpnFhf/TC1c=
+github.com/palavrapasse/damn v0.0.10/go.mod h1:7Yj+B7xykwnKufipuZq2z8daMuqhdd7USWe/cloc5NU=
 github.com/palavrapasse/paramedic v0.0.2 h1:me4aiMhaodLR+1gHETbTzBbtLKPb2dXBTtcz+IfnLuA=
 github.com/palavrapasse/paramedic v0.0.2/go.mod h1:K66P+Y29y+2j8/DS8LWTx/PmUytiZhIURN1U0r+Ji5o=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
